@@ -2,9 +2,27 @@ package pack;
 
 public class Input {
 
-    static int getColumn(String coordinate) {
-        coordinate.toLowerCase();
+    static int getRow(String coordinate) {
 
+        if (coordinate.isEmpty()) {
+            return 10;
+        } else if (coordinate.length() < 2) {
+            return 10;
+        } else if (String.valueOf(coordinate.charAt(1)).equals("1") && coordinate.length() > 2 && String.valueOf(coordinate.charAt(2)).equals("0")) {
+            return 9;
+        } else {
+            coordinate = String.valueOf(coordinate.charAt(1));
+            return Integer.parseInt(coordinate) - 1;
+        }
+    }
+
+    static int getColumn(String coordinate) {
+        coordinate = coordinate.toLowerCase();
+        if (coordinate.isEmpty()) {
+            return 10;
+        }
+
+        coordinate = String.valueOf(coordinate.charAt(0));
         if (coordinate.equals("a")) {
             return 0;
         } else if (coordinate.equals("b")) {
@@ -28,7 +46,5 @@ public class Input {
         } else {
             return 10;
         }
-
     }
-
 }
