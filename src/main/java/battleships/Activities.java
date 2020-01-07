@@ -4,6 +4,11 @@ import java.util.Random;
 
 public class Activities {
 
+    private static int gunboats = 4;
+    private static int destroyers = 3;
+    private static int cruisers = 2;
+    private static int battleships = 1;
+
     static void displayGame(String[][] my1, String[][] my2, String[][] enemy1, String[][] enemy2) {
 
         System.out.println("  |A |B |C |D |E |F |G |H |I |J         |A |B |C |D |E |F |G |H |I |J");
@@ -29,7 +34,7 @@ public class Activities {
             System.out.println(" ");
         }
         System.out.println();
-//        System.out.println("  |A |B |C |D |E |F |G |H |I |J         |A |B |C |D |E |F |G |H |I |J");
+//        System.out.println("  |A |B |C |D |E |F |G |H |I |J         |A |B |C |D |E |F |G |H |I |J");//
 //        for (int i = 1; i < 11; i++) {
 //            if (i < 10) {
 //                System.out.print((i) + " |");
@@ -50,7 +55,7 @@ public class Activities {
 //            }
 //
 //            System.out.println(" ");
-//        }
+//        }//
     }
 
     private static int getRandom(int range) {
@@ -59,13 +64,7 @@ public class Activities {
     }
 
     static void placeShips(String[][] table) {
-
-        int gunboats = 4;
-        int destroyers = 3;
-        int cruisers = 2;
-        int battleships = 1;
         int a, b, c, d;
-
         do {
             // czyszczenie tablicy wejsciowej
             for (int i = 0; i < 12; i++) {
@@ -213,8 +212,12 @@ public class Activities {
         } else if (String.valueOf(coordinate.charAt(1)).equals("1") && coordinate.length() > 2 && String.valueOf(coordinate.charAt(2)).equals("0")) {
             return 9;
         } else {
-            coordinate = String.valueOf(coordinate.charAt(1));
-            return Integer.parseInt(coordinate) - 1;
+            try {
+                coordinate = String.valueOf(coordinate.charAt(1));
+                return Integer.parseInt(coordinate) - 1;
+            } catch (Exception e) {
+                return 10;
+            }
         }
     }
 
@@ -258,6 +261,7 @@ public class Activities {
             displayTable[x][y + 2] = ".";
             displayTable[x][y] = ".";
             displayTable[x + 2][y] = ".";
+            System.out.print("You hit a ");
             int size = checkShipSize(x, y, target);
             checkIfSunk(x + 1, y + 1, size, displayTable);
             return 1;
@@ -268,9 +272,35 @@ public class Activities {
         }
     }
 
+    static int enemyFire(String[][] target, String[][] displayTable) {
+        int x = getRandom(10) + 1;
+        int y = getRandom(10) + 1;
+        while (displayTable[x][y].equals("X") || displayTable[x][y].equals(".")) {
+            x = getRandom(10) + 1;
+            y = getRandom(10) + 1;
+        }
+        convertCoordinates(x, y);
+        if (target[x][y].equals("O")) {
+            target[x][y] = "X";
+            displayTable[x + 1][y + 1] = ".";
+            displayTable[x - 1][y + 1] = ".";
+            displayTable[x - 1][y - 1] = ".";
+            displayTable[x + 1][y - 1] = ".";
+            displayTable[x][y] = "X";
+            System.out.print("Enemy hit your ");
+            int size = checkShipSize(x - 1, y - 1, target);
+            checkIfSunk(x, y, size, displayTable);
+            return 1;
+        } else {
+            System.out.println("Enemy missed!");
+            target[x][y] = "x";
+            displayTable[x][y] = ".";
+            return 0;
+        }
+    }
+
     static int checkShipSize(int x, int y, String[][] table) {
         int size = 1;
-
         for (int i = 1; i < 5; i++) {
             if (table[x + 1 + i][y + 1] == "O") {
                 size++;
@@ -300,13 +330,13 @@ public class Activities {
             }
         }
         if (size == 1) {
-            System.out.println("Hit! You hit a gunboat!");
+            System.out.println("gunboat!");
         } else if (size == 2) {
-            System.out.println("Hit! You hit a destroyer!");
+            System.out.println("destroyer!");
         } else if (size == 3) {
-            System.out.println("Hit! You hit a cruiser!");
+            System.out.println("cruiser!");
         } else if (size == 4) {
-            System.out.println("Hit! You hit a battleship!");
+            System.out.println("battleship!");
         }
         return size;
     }
@@ -513,4 +543,50 @@ public class Activities {
         }
     }
 
+    static int checkIfWin(String[][] table) {
+        int hits = 0;
+        for (int i = 1; i < 11; i++) {
+            for (int j = 1; j < 11; j++) {
+                if (table[i][j].equals("X")) {
+                    hits++;
+                }
+            }
+        }
+        System.out.println("Total hits: " + hits);
+        if (gunboats + 2 * destroyers + 3 * cruisers + 4 * battleships == hits) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    static void convertCoordinates(int x, int y) {
+        String column;
+        if (y == 1) {
+            column = "A";
+        } else if (y == 2) {
+            column = "B";
+        } else if (y == 3) {
+            column = "C";
+        } else if (y == 4) {
+            column = "D";
+        } else if (y == 5) {
+            column = "E";
+        } else if (y == 6) {
+            column = "F";
+        } else if (y == 7) {
+            column = "G";
+        } else if (y == 8) {
+            column = "H";
+        } else if (y == 9) {
+            column = "I";
+        } else {
+            column = "J";
+        }
+        System.out.println("Enemy takes a shot at " + column + x);
+    }
+
+    public static int shipDetectedNotSunk(int x, int y) {
+        return 0;
+    }
 }

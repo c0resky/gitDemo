@@ -7,7 +7,7 @@ public class BattleshipsMain {
     public static void main(String[] args) {
 
         Scanner scan = new Scanner(System.in);
-
+        int end = 0;
         String[][] my1 = new String[12][12];
         String[][] my2 = new String[12][12];
         String[][] enemy1 = new String[12][12];
@@ -39,8 +39,31 @@ public class BattleshipsMain {
                 }
                 accuracy = Activities.playerFire(X, Y, my2, enemy1);
                 Activities.displayGame(my1, my2, enemy1, enemy2);
+                end = Activities.checkIfWin(my2);
+                if (end == 1) {
+                    break;
+                }
             } while (accuracy != 0);
 
+            if (end == 1) {
+                System.out.println("Mission accomplished! You have won the battle!");
+                break;
+            }
+
+            do {
+                accuracy = Activities.enemyFire(my1, enemy2);
+                Activities.displayGame(my1, my2, enemy1, enemy2);
+                end = Activities.checkIfWin(my1);
+                if (end == 1) {
+                    break;
+                }
+            } while (accuracy != 0);
+
+            if (end == 1) {
+                System.out.println("Mission failed! Enemy has won the battle!");
+                break;
+            }
         } while (!(input.equals("0")));
+
     }
 }
